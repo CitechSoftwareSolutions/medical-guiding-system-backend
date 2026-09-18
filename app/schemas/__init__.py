@@ -8,6 +8,7 @@ from app.schemas.auth import (
     PermissionRead,
     UserRoleAssign,
     PasswordChange,
+    UserUpdate,
 )
 from app.schemas.doctor import DoctorProfileCreate, DoctorProfileUpdate, DoctorProfileRead
 from app.schemas.student import StudentProfileCreate, StudentProfileUpdate, StudentProfileRead
@@ -32,6 +33,7 @@ from app.schemas.chat import (
 )
 from app.schemas.notification import NotificationCreate, NotificationRead
 from app.schemas.audit import AuditLogRead
+from app.schemas.navigation import NavigationItemCreate, NavigationItemUpdate, NavigationItemRead
 
 __all__ = [
     "UserRegister",
@@ -74,4 +76,5 @@ __all__ = [
     "NotificationCreate",
     "NotificationRead",
     "AuditLogRead",
+    "UserUpdate",
 ]

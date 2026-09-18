@@ -12,6 +12,7 @@ from app.routers.payments import router as payments_router
 from app.routers.chat import router as chat_router
 from app.routers.notifications import router as notifications_router
 from app.routers.audit_logs import router as audit_logs_router
+from app.routers.navigation import router as navigation_router
 
 api_router = APIRouter()
 
@@ -27,3 +28,4 @@ api_router.include_router(payments_router)
 api_router.include_router(chat_router)
 api_router.include_router(notifications_router)
 api_router.include_router(audit_logs_router)
+api_router.include_router(navigation_router)

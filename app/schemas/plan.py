@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, ConfigDict
 
 
@@ -8,6 +8,7 @@ class PlanBase(BaseModel):
     price: float
     duration_days: int = 30
     description: Optional[str] = None
+    features: Optional[List[str]] = None
 
 
 class PlanCreate(PlanBase):
@@ -19,6 +20,7 @@ class PlanUpdate(BaseModel):
     price: Optional[float] = None
     duration_days: Optional[int] = None
     description: Optional[str] = None
+    features: Optional[List[str]] = None
     status: Optional[str] = None
 
 

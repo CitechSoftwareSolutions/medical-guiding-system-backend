@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List, TYPE_CHECKING
-from sqlalchemy import String, Integer, Text, Numeric, ForeignKey, DateTime, func
+from sqlalchemy import String, Integer, Text, Numeric, ForeignKey, DateTime, func, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.database import Base
@@ -22,6 +22,7 @@ class Plan(Base):
     price: Mapped[float] = mapped_column(Numeric(10, 2), default=0.00, server_default="0.00", nullable=False)
     duration_days: Mapped[int] = mapped_column(Integer, default=30, server_default="30", nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    features: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)
     status: Mapped[str] = mapped_column(
         String(20), default="active", server_default="active", nullable=False
     )  # 'active', 'inactive', 'archived'

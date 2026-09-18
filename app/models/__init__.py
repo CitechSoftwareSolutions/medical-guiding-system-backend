@@ -8,6 +8,7 @@ from app.models.payment import Payment
 from app.models.chat import ChatSession, ChatMessage
 from app.models.notification import Notification
 from app.models.audit import AuditLog
+from app.models.navigation import NavigationItem
 
 __all__ = [
     "User",
@@ -27,4 +28,5 @@ __all__ = [
     "ChatMessage",
     "Notification",
     "AuditLog",
+    "NavigationItem",
 ]

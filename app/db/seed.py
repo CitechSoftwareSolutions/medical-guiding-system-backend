@@ -5,6 +5,7 @@ from app.db.database import SessionLocal
 from app.models.role import Role, Permission, RolePermission
 from app.models.document import Category
 from app.models.subscription import Plan
+from app.models.navigation import NavigationItem
 
 DEFAULT_ROLES = [
     {"name": "Admin", "description": "System administrator with full access"},
@@ -56,9 +57,67 @@ DEFAULT_CATEGORIES = [
 ]
 
 DEFAULT_PLANS = [
-    {"name": "Free Starter", "price": 0.00, "duration_days": 365, "description": "Access to all free documents and basic AI guidance."},
-    {"name": "Pro Monthly", "price": 29.00, "duration_days": 30, "description": "Full access to all premium documents and extended AI chatbot guidance."},
-    {"name": "Premium Annual", "price": 199.00, "duration_days": 365, "description": "Complete 1-year unlimited access to all platform materials and priority support."},
+    {
+        "name": "Free Starter",
+        "price": 0.00,
+        "duration_days": 365,
+        "description": "Access to all free documents and basic clinical guidance.",
+        "features": [
+            "Access to all Free core documents",
+            "Basic clinical guidance consultation",
+            "Standard community forum access",
+            "View public clinical categories",
+        ],
+    },
+    {
+        "name": "Pro Monthly",
+        "price": 29.00,
+        "duration_days": 30,
+        "description": "Full access to all premium documents and extended diagnostic consultation.",
+        "features": [
+            "Full access to 300+ Pro clinical documents",
+            "Unlimited Clinical Guidance consultation",
+            "Detailed examination notes & auscultation guides",
+            "Direct doctor access request entitlement",
+            "Priority student support",
+        ],
+    },
+    {
+        "name": "Premium Annual",
+        "price": 199.00,
+        "duration_days": 365,
+        "description": "Complete 1-year unlimited access to all platform materials and priority support.",
+        "features": [
+            "Everything in Pro Monthly plan",
+            "Full 365 days unlimited VIP access",
+            "Exclusive high-yield exam preparation packages",
+            "Direct clinical mentor messaging & webinars",
+            "Official certificate of completion",
+        ],
+    },
+]
+
+DEFAULT_NAVIGATION_ITEMS = [
+    # Top Navbar
+    {"title": "Home", "path": "/", "icon": "Home", "menu_type": "top_navbar", "target_role": "all", "display_order": 1},
+    {"title": "About", "path": "/about", "icon": "Info", "menu_type": "top_navbar", "target_role": "all", "display_order": 2},
+    {"title": "Services", "path": "/services", "icon": "Activity", "menu_type": "top_navbar", "target_role": "all", "display_order": 3},
+    {"title": "Contact", "path": "/contact", "icon": "Phone", "menu_type": "top_navbar", "target_role": "all", "display_order": 4},
+    # Sidebar Student
+    {"title": "Dashboard", "path": "/dashboard", "icon": "LayoutDashboard", "menu_type": "sidebar_student", "target_role": "student", "display_order": 1},
+    {"title": "Resources", "path": "/documents", "icon": "BookOpen", "menu_type": "sidebar_student", "target_role": "student", "display_order": 2},
+    {"title": "Clinical Guidance", "path": "/chat", "icon": "MessageSquare", "menu_type": "sidebar_student", "target_role": "student", "display_order": 3},
+    {"title": "Plans", "path": "/plans", "icon": "CreditCard", "menu_type": "sidebar_student", "target_role": "student", "display_order": 4},
+    # Sidebar Doctor
+    {"title": "Dashboard", "path": "/doctor/dashboard", "icon": "LayoutDashboard", "menu_type": "sidebar_doctor", "target_role": "doctor", "display_order": 1},
+    {"title": "Documents", "path": "/doctor/documents", "icon": "FileText", "menu_type": "sidebar_doctor", "target_role": "doctor", "display_order": 2},
+    {"title": "Student Access", "path": "/doctor/grant-access", "icon": "UserCheck", "menu_type": "sidebar_doctor", "target_role": "doctor", "display_order": 3},
+    {"title": "Plans", "path": "/plans", "icon": "CreditCard", "menu_type": "sidebar_doctor", "target_role": "doctor", "display_order": 4},
+    # Sidebar Admin
+    {"title": "Dashboard", "path": "/admin/users", "icon": "LayoutDashboard", "menu_type": "sidebar_admin", "target_role": "admin", "display_order": 1},
+    {"title": "Audit Logs", "path": "/admin/audit-logs", "icon": "FileText", "menu_type": "sidebar_admin", "target_role": "admin", "display_order": 2},
+    {"title": "Documents", "path": "/doctor/documents", "icon": "BookOpen", "menu_type": "sidebar_admin", "target_role": "admin", "display_order": 3},
+    {"title": "Student Access", "path": "/doctor/grant-access", "icon": "UserCheck", "menu_type": "sidebar_admin", "target_role": "admin", "display_order": 4},
 ]
 
 
@@ -117,9 +176,37 @@ def seed_database(db: Session) -> None:
                 price=p_data["price"],
                 duration_days=p_data["duration_days"],
                 description=p_data["description"],
+                features=p_data.get("features"),
                 status="active",
             )
             db.add(plan)
+        else:
+            plan.features = p_data.get("features")
+            plan.description = p_data.get("description")
+
+    # 6. Default Navigation Items
+    for n_data in DEFAULT_NAVIGATION_ITEMS:
+        item = db.scalar(
+            select(NavigationItem).where(
+                NavigationItem.menu_type == n_data["menu_type"],
+                NavigationItem.path == n_data["path"],
+            )
+        )
+        if not item:
+            item = NavigationItem(
+                title=n_data["title"],
+                path=n_data["path"],
+                icon=n_data["icon"],
+                menu_type=n_data["menu_type"],
+                target_role=n_data["target_role"],
+                display_order=n_data["display_order"],
+                is_active=True,
+            )
+            db.add(item)
+        else:
+            item.title = n_data["title"]
+            item.icon = n_data["icon"]
+            item.display_order = n_data["display_order"]
 
     db.commit()
 
@@ -128,6 +215,6 @@ if __name__ == "__main__":
     db = SessionLocal()
     try:
         seed_database(db)
-        print("Database seeded successfully with roles, permissions, categories, and plans.")
+        print("Database seeded successfully with roles, permissions, categories, plans, and navigation items.")
     finally:
         db.close()

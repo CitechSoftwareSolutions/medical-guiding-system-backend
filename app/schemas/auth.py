@@ -61,6 +61,7 @@ class UserRead(BaseModel):
     first_name: str
     last_name: str
     phone: Optional[str] = None
+    avatar_url: Optional[str] = None
     status: str
     email_verified: bool
     created_at: datetime
@@ -77,3 +78,12 @@ class UserRoleAssign(BaseModel):
 class PasswordChange(BaseModel):
     old_password: str
     new_password: str
+
+
+class UserUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone: Optional[str] = None
+    avatar_url: Optional[str] = None
+
+
