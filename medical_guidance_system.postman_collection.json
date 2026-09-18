@@ -1,0 +1,826 @@
+{
+  "info": {
+    "name": "Medical Guidance System API",
+    "description": "Comprehensive Postman collection covering all endpoints for the Medical Guidance System backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "doctor_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "student_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "API Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Authentication & RBAC",
+      "item": [
+        {
+          "name": "Register Doctor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"doctor.smith@hospital.org\",\n  \"password\": \"DoctorPass123!\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Smith\",\n  \"phone\": \"+1234567890\",\n  \"role\": \"Doctor\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student.alice@medschool.edu\",\n  \"password\": \"StudentPass123!\",\n  \"first_name\": \"Alice\",\n  \"last_name\": \"Walker\",\n  \"phone\": \"+1987654321\",\n  \"role\": \"Student\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login Doctor (Sets {{doctor_token}})",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set('doctor_token', jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"doctor.smith@hospital.org\",\n  \"password\": \"DoctorPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Student (Sets {{student_token}})",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set('student_token', jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student.alice@medschool.edu\",\n  \"password\": \"StudentPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User Profile (/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "List Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/roles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "roles"]
+            }
+          }
+        },
+        {
+          "name": "List Permissions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/permissions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "permissions"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Doctor Profiles",
+      "item": [
+        {
+          "name": "List All Doctors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/doctors/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "doctors", ""]
+            }
+          }
+        },
+        {
+          "name": "Get My Doctor Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/doctors/me/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "doctors", "me", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Doctor Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"license_number\": \"MD-884920\",\n  \"specialization\": \"Cardiology & Internal Medicine\",\n  \"qualification\": \"MD, FACC, MBBS\",\n  \"experience_years\": 12,\n  \"bio\": \"Senior Cardiologist specializing in heart sounds, clinical diagnostics, and medical student mentorship.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/doctors/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "doctors", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Student Profiles",
+      "item": [
+        {
+          "name": "Get My Student Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/students/me/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "students", "me", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Student Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"university\": \"Faculty of Medicine, Colombo\",\n  \"batch\": \"Batch 34\",\n  \"year\": \"4th Year\",\n  \"country\": \"Sri Lanka\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/students/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "students", "1"]
+            }
+          }
+        },
+        {
+          "name": "List All Students (Doctor / Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/students/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "students", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "categories", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Category (Doctor/Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cardiology Notes\",\n  \"description\": \"Comprehensive cardiac auscultation and ECG interpretation guides\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/categories/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "categories", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Documents",
+      "item": [
+        {
+          "name": "List Documents (Public / Free)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", ""]
+            }
+          }
+        },
+        {
+          "name": "Upload Document File (Form-Data)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "upload"]
+            }
+          }
+        },
+        {
+          "name": "Create Document Metadata (Free Document)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Clinical Examination of Cardiovascular System\",\n  \"description\": \"Step-by-step bedside clinical examination method for medical students.\",\n  \"category_id\": 1,\n  \"visibility\": \"free\",\n  \"file_url\": \"/uploads/cardio_exam.pdf\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Document Metadata (Premium Document)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Advanced ECG Interpretation Masterclass\",\n  \"description\": \"Comprehensive 200 case analysis with differential diagnoses.\",\n  \"category_id\": 1,\n  \"visibility\": \"premium\",\n  \"file_url\": \"/uploads/advanced_ecg_masterclass.pdf\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Document by ID (Access Check)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "1"]
+            }
+          }
+        },
+        {
+          "name": "Grant Document Access to Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": 1,\n  \"document_id\": 2,\n  \"access_type\": \"granted\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/grant-access",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "grant-access"]
+            }
+          }
+        },
+        {
+          "name": "Get Student's Accessible Documents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/student/my-documents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "student", "my-documents"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Subscription Plans",
+      "item": [
+        {
+          "name": "List All Subscription Plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/plans/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "plans", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Custom Plan (Doctor/Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Final MBBS Exam Prep Plan\",\n  \"price\": 49.99,\n  \"duration_days\": 60,\n  \"description\": \"Targeted 2-month crash course with premium case discussions and high-yield MCQ guidance.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/plans/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "plans", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Subscriptions",
+      "item": [
+        {
+          "name": "Subscribe to Plan (Student)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan_id\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/subscribe",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", "subscribe"]
+            }
+          }
+        },
+        {
+          "name": "Get My Active Subscription",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/my-subscription",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", "my-subscription"]
+            }
+          }
+        },
+        {
+          "name": "Get Subscription History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/history",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", "history"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Payments",
+      "item": [
+        {
+          "name": "Process Payment (Student)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan_id\": 2,\n  \"amount\": 29.00,\n  \"currency\": \"USD\",\n  \"gateway\": \"manual\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/payments/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "payments", ""]
+            }
+          }
+        },
+        {
+          "name": "Get My Payments (Student)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/payments/my-payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "payments", "my-payments"]
+            }
+          }
+        },
+        {
+          "name": "List All Payments (Admin / Owner)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/payments/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "payments", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. AI Medical Chatbot",
+      "item": [
+        {
+          "name": "Ask Medical Question (Creates / Uses Session)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"What are the key differences between systolic and diastolic heart murmurs?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/chat/query",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "chat", "query"]
+            }
+          }
+        },
+        {
+          "name": "List My Chat Sessions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chat/sessions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "chat", "sessions"]
+            }
+          }
+        },
+        {
+          "name": "Get Specific Chat Session with Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/chat/sessions/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "chat", "sessions", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Notifications",
+      "item": [
+        {
+          "name": "Get My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications", ""]
+            }
+          }
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/1/read",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications", "1", "read"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Audit Logs",
+      "item": [
+        {
+          "name": "List Audit Logs (Admin / Owner)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{doctor_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/audit-logs/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "audit-logs", ""]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
