@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.deps import get_db, get_current_user, get_optional_current_user, require_role
+from app.core.storage import StorageService
 from app.models.user import User
 from app.schemas.document import (
     DocumentCreate,
@@ -110,13 +111,12 @@ def upload_file(
     file: UploadFile = File(...),
     current_user: Annotated[User, Depends(require_role("Doctor", "Admin", "Owner"))] = None,
 ):
-    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     file_name = f"{current_user.id}_{file.filename}"
-    file_path = os.path.join(settings.UPLOAD_DIR, file_name)
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    file_url = f"/uploads/{file_name}"
+    file_url = StorageService.save_file(
+        file=file,
+        target_filename=file_name,
+        folder_prefix="documents",
+    )
     return {"file_url": file_url, "filename": file.filename}
 
 

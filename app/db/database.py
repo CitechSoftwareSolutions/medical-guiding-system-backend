@@ -9,7 +9,11 @@ class Base(DeclarativeBase):
 
 engine = create_engine(
     settings.DATABASE_URL,
-    echo=True,
+    echo=False,
+    pool_pre_ping=True,       # Crucial for serverless: tests connection liveness
+    pool_size=5,              # Keeps per-Lambda container connection count conservative
+    max_overflow=10,
+    pool_recycle=300,         # Recycles stale connections every 5 minutes
 )
 
 SessionLocal = sessionmaker(

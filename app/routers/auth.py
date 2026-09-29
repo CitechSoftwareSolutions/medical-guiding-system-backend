@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.deps import get_db, get_current_user, require_role
 from app.core.security import create_access_token
+from app.core.storage import StorageService
 from app.models.user import User
 from app.models.role import Role, Permission
 from app.schemas.auth import (
@@ -135,14 +136,13 @@ def upload_avatar(
             detail="Only image files (.jpg, .jpeg, .png, .webp, .gif) are supported.",
         )
 
-    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     clean_filename = f"avatar_{current_user.id}_{int(time.time())}{ext.lower()}"
-    file_path = os.path.join(settings.UPLOAD_DIR, clean_filename)
+    avatar_url = StorageService.save_file(
+        file=file,
+        target_filename=clean_filename,
+        folder_prefix="avatars",
+    )
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    avatar_url = f"http://127.0.0.1:8000/uploads/{clean_filename}"
     current_user.avatar_url = avatar_url
     db.commit()
     db.refresh(current_user)

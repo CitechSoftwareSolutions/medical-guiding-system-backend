@@ -1,0 +1,63 @@
+service: medguidance-backend
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  memorySize: 512
+  timeout: 30
+  environment:
+    DATABASE_URL: ${env:DATABASE_URL}
+    SECRET_KEY: ${env:SECRET_KEY, 'medical-guidance-super-secret-key-change-in-production-2026'}
+    AUTO_SEED_ON_STARTUP: 'false'
+    S3_BUCKET_NAME: ${env:S3_BUCKET_NAME, ''}
+    AWS_REGION: ${self:provider.region}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+          Resource:
+            - arn:aws:s3:::${env:S3_BUCKET_NAME, 'medguidance-uploads'}/*
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!.venv/**'
+    - '!__pycache__/**'
+    - '!*.md'
+    - '!uploads/**'
+    - '!tests/**'
+    - 'app/**'
+    - 'alembic/**'
+    - 'alembic.ini'
+    - 'requirements.txt'
+
+functions:
+  api:
+    handler: app.main.handler
+    events:
+      - httpApi:
+          path: /{proxy+}
+          method: ANY
+      - httpApi:
+          path: /
+          method: ANY
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    layer: false
+    strip: false
+    noDeploy:
+      - boto3
+      - botocore
