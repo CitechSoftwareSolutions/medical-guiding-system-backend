@@ -3,7 +3,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from mangum import Mangum
 
 from app.core.config import settings
 from app.db.database import SessionLocal
@@ -79,6 +78,10 @@ def health_check():
     }
 
 
-# AWS Lambda ASGI handler adapter
+# AWS Lambda ASGI handler adapter (initialized when mangum is available)
 # lifespan="off" avoids re-running startup/shutdown lifecycle logic on every single invocation
-handler = Mangum(app, lifespan="off")
+try:
+    from mangum import Mangum
+    handler = Mangum(app, lifespan="off")
+except ImportError:
+    handler = None
